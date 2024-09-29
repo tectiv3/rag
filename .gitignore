@@ -2,3 +2,4 @@
 docs.index
 *.pkl
 .env
+faiss_index/index.faiss

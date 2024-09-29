@@ -1,9 +1,11 @@
 import os
 from dotenv import load_dotenv
 import faiss
+import pickle
 from langchain_openai import ChatOpenAI
 from langchain_community.document_loaders import DirectoryLoader
 from langchain_community.vectorstores import FAISS
+# from langchain.retrievers import FaissRetriever
 
 from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
@@ -32,13 +34,26 @@ prompt = ChatPromptTemplate.from_messages(
     ]
 )
 
-loader = DirectoryLoader("./docs", glob="**/*.md", loader_cls=TextLoader)
-docs = loader.load()
+# loader = DirectoryLoader("./docs", glob="**/*.md", loader_cls=TextLoader)
+# docs = loader.load()
+#
+# text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
+# splits = text_splitter.split_documents(docs)
+# vectorstore = FAISS.from_documents(documents=splits, embedding=OpenAIEmbeddings())
 
-text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
-splits = text_splitter.split_documents(docs)
-vectorstore = FAISS.from_documents(documents=splits, embedding=OpenAIEmbeddings())
-# Retrieve and generate using the relevant snippets of the blog.
+# faiss.write_index(vectorstore.index, "docs.index")
+# vectorstore.save_local("faiss_index")
+
+# vectorstore.index = None
+# with open("faiss_store.pkl", "wb") as f:
+#     pickle.dump(vectorstore, f)
+
+# index = faiss.read_index('docs.index')
+# retriever = FaissRetriever(index=index)
+
+vectorstore = FAISS.load_local(
+    "faiss_index", OpenAIEmbeddings(), allow_dangerous_deserialization=True
+)
 retriever = vectorstore.as_retriever()
 
 question_answer_chain = create_stuff_documents_chain(llm, prompt)
