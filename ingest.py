@@ -1,4 +1,3 @@
-# import pickle
 import faiss
 from dotenv import load_dotenv
 
@@ -20,11 +19,3 @@ splits = text_splitter.split_documents(docs)
 
 vectorstore = FAISS.from_documents(documents=splits, embedding=OpenAIEmbeddings())
 vectorstore.save_local("faiss_index")
-
-# store = FAISS.from_texts(docs, OpenAIEmbeddings(), metadatas=metadatas)
-
-
-# faiss.write_index(vectorstore.index, "docs.index")
-# vectorstore.index = None
-# with open("faiss_store.pkl", "wb") as f:
-#     pickle.dump(vectorstore, f)
